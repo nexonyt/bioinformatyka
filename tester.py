@@ -93,7 +93,6 @@ def run_parameter_test(dataset_folder, pop_sizes, num_runs=5, generations=50):
             'convergence': avg_convergence
         }
 
-    # --- Generowanie Wykresu Zbieżności ---
     print("\n[Rysowanie wykresu zbieżności...]")
     plt.figure(figsize=(10, 6))
     for pop_size, data in results_summary.items():
@@ -110,7 +109,6 @@ def run_parameter_test(dataset_folder, pop_sizes, num_runs=5, generations=50):
     print(f"[!] Gotowy wykres zapisano do pliku: {chart_filename}")
     plt.show()
 
-    # --- Drukowanie Tabeli Wyników ---
     print("\n" + "="*80)
     print("GOTOWA TABELA DO SPRAWOZDANIA (WARIANT ROZSZERZONY - BIAŁKA)")
     print("="*80)
@@ -121,16 +119,15 @@ def run_parameter_test(dataset_folder, pop_sizes, num_runs=5, generations=50):
     print("="*80)
 
 if __name__ == "__main__":
-    import random # potrzebne do generatora
+    import random
     target_folder = 'test_data'
     
-    # 1. KROK: Upewniamy się, że pliki wejściowe istnieją
+    
     print("[1/2] Przygotowanie instancji białkowych...")
     generate_protein_instances(target_folder, 'protein_easy', num_seqs=5, base_len=40, mut_rate=0.05, gap_rate=0.05)
     generate_protein_instances(target_folder, 'protein_medium', num_seqs=6, base_len=60, mut_rate=0.15, gap_rate=0.10)
     generate_protein_instances(target_folder, 'protein_hard', num_seqs=7, base_len=80, mut_rate=0.25, gap_rate=0.15)
     
-    # 2. KROK: Uruchomienie właściwych testów
     print("\n[2/2] Odpalanie właściwego potoku testowego...")
-    # num_runs=3, generations=40 dla szybkiego testu, zwiększ przed oddaniem
+    
     run_parameter_test(target_folder, pop_sizes=[10, 30, 50], num_runs=3, generations=40)
