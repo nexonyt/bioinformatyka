@@ -26,6 +26,10 @@ class GeneticAlgorithmMSA:
 
     def _get_substitution_score(self, a1, a2):
         """Zwraca wartość z macierzy BLOSUM62 dla pary aminokwasów."""
+        """
+        Funkcja pomocnicza sprawdzająca, ile punktów (dodatnich lub ujemnych)
+        należy przyznać za zestawienie dwóch konkretnych aminokwasów.
+        """
         # Jeśli któryś aminokwas wykracza poza uproszczoną macierz, domyślnie traktujemy jako mismatch
         if a1 in self.blosum62 and a2 in self.blosum62[a1]:
             return self.blosum62[a1][a2]
@@ -82,6 +86,11 @@ class GeneticAlgorithmMSA:
         return total_score
 
     def initialize_population(self):
+        """
+        Tworzy punkt startowy (pokolenie zerowe) algorytmu.
+        Wrzuca losowo luki ('-') do oryginalnych sekwencji, aż osiągną
+        one wymaganą długość, po czym zwraca listę wylosowanych osobników.
+        """
         population = []
         max_len = max(len(s) for s in self.sequences)
         target_len = int(max_len * 1.2) 
@@ -100,6 +109,10 @@ class GeneticAlgorithmMSA:
         return population
 
     def remove_empty_columns(self, alignment):
+        """
+        Funkcja sprzątająca (optymalizacyjna). Usuwa kolumny, w których dla
+        wszystkich sekwencji znajduje się wyłącznie znak luki, redukując długość.
+        """
         num_seqs = len(alignment)
         length = len(alignment[0])
         cols_to_keep = []
@@ -116,6 +129,11 @@ class GeneticAlgorithmMSA:
         return new_alignment
 
     def mutate(self, alignment):
+        """
+        Operator mutacji zapobiegający stagnacji algorytmu.
+        Z określonym prawdopodobieństwem wybiera losową sekwencję, wycina w niej
+        cały blok luk i przenosi go w inne, losowe miejsce.
+        """
         if random.random() > self.mutation_rate:
             return alignment
 
@@ -147,6 +165,11 @@ class GeneticAlgorithmMSA:
         return ["".join(seq) for seq in new_align]
 
     def crossover(self, parent1, parent2):
+        """
+        Operator krzyżowania łączący materiał genetyczny dwóch rozwiązań.
+        Znajduje bezpieczny punkt odcięcia (gdzie zużyto tę samą liczbę aminokwasów)
+        i skleja lewą połowę rodzica 1 z prawą połową rodzica 2.
+        """
         num_seqs = len(parent1)
         
         def get_states(parent):
@@ -184,6 +207,11 @@ class GeneticAlgorithmMSA:
         return child
 
     def run(self):
+        """
+        Główny silnik (pętla) algorytmu ewolucyjnego.
+        Odpowiada za inicjalizację, ocenę, sortowanie populacji, selekcję
+        najlepszych (elityzm) oraz tworzenie nowych pokoleń w zadanej liczbie cykli.
+        """
         population = self.initialize_population()
         history = []
         
